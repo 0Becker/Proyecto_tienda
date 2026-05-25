@@ -226,6 +226,7 @@ productsContainer.innerHTML = "";
   });
 
 
+  // TODO
 }
 
 
@@ -263,6 +264,8 @@ function renderCategories(productsArray){
     .catch(error => console.error("Error fetching categories:", error));
 }
 renderCategories();
+
+
 
 // ========================================
 // FASE 2 - FILTROS
@@ -347,11 +350,14 @@ fetch("https://fakestoreapi.com/products")
     const buscador = data.filter(producto => producto.title.toLowerCase().includes(searchInput.value.toLowerCase()));
     renderProducts(buscador); 
   }
-  })
+  })        
   .catch(error => console.error("Error filtering products:", error));
 
 }
 
+
+
+     
 // ========================================
 // EVENTOS FILTROS
 // ========================================
