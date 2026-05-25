@@ -15,23 +15,23 @@ VARIABLES
 
 :root{
 
-  --bg:#f1f5f9;
+  --bg:#7a7a7e70;
 
-  --white:#ffffff;
+  --white:#a09797;
 
   --text:#0f172a;
 
   --muted:#64748b;
 
-  --primary:#6366f1;
+  --primary:#6119e8;
 
-  --primary-hover:#4f46e5;
+  --primary-hover:#4600e8f8;
 
   --success:#10b981;
 
   --danger:#ef4444;
 
-  --border:#e2e8f0;
+  --border:#232426;
 
 }
 

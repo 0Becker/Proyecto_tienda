@@ -73,16 +73,14 @@ const loginForm =
 
 // Productos API
 let products = [];
-
 // Productos filtrados
 let filteredProducts = [];
 
 // Carrito
-let cart = [];
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 // Favoritos
 let favorites = [];
-
 
 // ========================================
 // FASE 1 - FETCH PRODUCTOS
@@ -152,16 +150,97 @@ products.forEach(product => {
 */
 
 
-function getProducts(){
 
-  // TODO
+async function getProducts() {
+
+  try {
+
+    const response =
+      await fetch("https://fakestoreapi.com/products");
+
+    const data = await response.json();
+
+    products = data;
+
+    filteredProducts = data;
+
+    renderProducts(products);
+
+    renderCategories(products);
+
+  } catch (error) {
+
+    console.log("Error obteniendo productos", error);
+
+  }
 
 }
 
+function renderProducts(productsList) {
 
-// ========================================
-// FASE 1 - RENDER PRODUCTOS
-// ========================================
+  productsContainer.innerHTML = "";
+
+  productsList.forEach(product => {
+
+    const card = document.createElement("article");
+
+    card.classList.add("product-card");
+
+    card.innerHTML = `
+
+      <div class="product-image">
+
+        <img src="${product.image}" alt="${product.title}">
+
+      </div>
+
+      <div class="product-info">
+
+        <p class="product-category">
+
+          ${product.category}
+
+        </p>
+
+        <h3 class="product-title">
+
+          ${product.title}
+
+        </h3>
+
+        <p class="product-price">
+
+          ${product.price}€
+
+        </p>
+
+        <div class="card-actions">
+
+          <button
+            class="add-btn"
+            onclick="addToCart(${product.id})"
+          >
+            Añadir
+          </button>
+
+          <button
+            class="fav-btn"
+            onclick="toggleFavorite(${product.id})"
+          >
+            🤍
+          </button>
+
+        </div>
+
+      </div>
+
+    `;
+
+    productsContainer.appendChild(card);
+
+  });
+
+}
 
 /*
 OBJETIVO:
@@ -182,7 +261,35 @@ Usar:
 - appendChild
 */
 
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
+const productsContainer = document.getElementById("productsContainer");
+
+const cartContainer = document.getElementById("cartContainer");
+
+const cartTotal = document.getElementById("cartTotal");
+
+
+function obtenerProductosDelHTML() {
+
+  const cards = document.querySelectorAll(".product-card");
+
+  return [...cards].map((card, index) => {
+
+    return {
+      id: index + 1,
+      nombre: card.querySelector(".product-title").textContent,
+      precio: parseFloat(
+        card.querySelector(".product-price")
+          .textContent.replace("€", "")
+      ),
+      categoria: card.querySelector(".product-category").textContent,
+      imagen: card.querySelector("img").src
+    };
+
+  });
+
+}
 /*
 ========================================
 PISTA RENDERIZADO
@@ -201,15 +308,29 @@ productsContainer.appendChild(card);
 ========================================
 */
 
+/*
+const card = document.createElement("article");
 
-function renderProducts(productsArray){
+card.innerHTML = `
+  <h2>${product.title}</h2>
+`;productsContainer.appendChild(card);
+function renderProducts(productsArray){ 
 
-  // TODO
+  productsArray.forEach(product => {
 
-}
+    const card = document.createElement("article");
+
+    card.innerHTML = `
+      <h2>${product.title}</h2>
+    `;
+
+    productsContainer.appendChild(card);
+  });
+
+} */
 
 
-// ========================================
+/* ========================================
 // FASE 2 - CATEGORÍAS
 // ========================================
 
@@ -299,11 +420,26 @@ TAREAS:
 - Renderizar carrito
 */
 
-function addToCart(id){
 
-  // TODO
-
+function buscarProducto(id) {
+  return products.find(product => product.id === id);
 }
+
+function addToCart(id){
+  const product = buscarProducto(id);
+  if (product) {
+    const cartItem = cart.find(item => item.id === id);
+    if (cartItem) {
+      cartItem.quantity++;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+  return cart;  
+}
+
+
 
 
 /*
@@ -329,9 +465,51 @@ MOSTRAR:
 - Total carrito
 */
 
-function renderCart(){
+function renderCart() {
 
-  // TODO
+  cartContainer.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach(item => {
+
+    total += item.price * item.quantity;
+
+    cartContainer.innerHTML += `
+
+      <div class="cart-item">
+
+        <div class="cart-item-info">
+
+          <p class="cart-item-title">
+
+            ${item.title}
+
+          </p>
+
+          <p class="cart-item-price">
+
+            ${item.quantity} x ${item.price}€
+
+          </p>
+
+        </div>
+
+        <button
+          class="remove-btn"
+          onclick="removeFromCart(${item.id})"
+        >
+          X
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+  cartTotal.textContent =
+    total.toFixed(2) + "€";
 
 }
 
@@ -356,6 +534,13 @@ JSON.stringify()
 */
 
 function saveCart(){
+
+º
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  let cartString = localStorage.getItem("cart");
+  console.log(JSON.parse(cartString));
 
   // TODO
 
@@ -481,7 +666,12 @@ TAREAS:
 
 function checkSession(){
 
-  // TODO
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    loginModal.classList.remove("hidden");
+  } else {
+    loginModal.classList.add("hidden");
+  }
 
 }
 
@@ -497,7 +687,8 @@ TAREAS:
 
 function logout(){
 
-  // TODO
+  sessionStorage.removeItem("token");
+  loginModal.classList.add("hidden");
 
 }
 
@@ -521,9 +712,7 @@ Abrir modal login.
 accountBtn.addEventListener(
   "click",
   () => {
-
-    // TODO
-
+    loginModal.classList.remove("hidden");
   }
 );
 
@@ -536,6 +725,7 @@ Cerrar modal login.
 closeLogin.addEventListener(
   "click",
   () => {
+    loginModal.classList.add("hidden");
 
     // TODO
 
