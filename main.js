@@ -297,7 +297,7 @@ fetch("https://fakestoreapi.com/products")
     .then(res => res.json())
     .then(data => {
            let men=data.filter(producto => producto.category === "men's clothing")
-         if (categoryFilter.value=="all"&&sortSelect.value === "selec") {
+         if (categoryFilter.value=="all"&&sortSelect.value === "priceAsc") {
           renderProducts(data.filter(producto => producto.price).sort((b,a) => a.price - b.price))
     } else if (categoryFilter.value=="all"&& sortSelect.value === "priceDesc") {
       renderProducts(data.filter(producto => producto.price).sort((a,b) => a.price - b.price))
@@ -307,7 +307,7 @@ fetch("https://fakestoreapi.com/products")
       renderProducts(data.filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
     }
 
-    if (categoryFilter.value == "men's clothing"&& sortSelect.value === "selec") {
+    if (categoryFilter.value == "men's clothing"&& sortSelect.value === "priceAsc") {
       renderProducts(men.filter(producto => producto.price).sort((b,a) => a.price - b.price))
     }else if (categoryFilter.value == "men's clothing"&& sortSelect.value === "priceDesc") {
       renderProducts(men.filter(producto => producto.price).sort((a,b) => a.price - b.price))
@@ -317,7 +317,7 @@ fetch("https://fakestoreapi.com/products")
       renderProducts(men.filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
     }
 
-    if (categoryFilter.value == "jewelery"&& sortSelect.value === "selec") {
+    if (categoryFilter.value == "jewelery"&& sortSelect.value === "priceAsc") {
       renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((b,a) => a.price - b.price))
     }else if (categoryFilter.value == "jewelery"&& sortSelect.value === "priceDesc") {
       renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a,b) => a.price - b.price))
@@ -327,7 +327,7 @@ fetch("https://fakestoreapi.com/products")
       renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
     }
 
-    if (categoryFilter.value == "electronics"&& sortSelect.value === "selec") {
+    if (categoryFilter.value == "electronics"&& sortSelect.value === "priceAsc") {
       renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((b,a) => a.price - b.price))
     }else if (categoryFilter.value == "electronics"&& sortSelect.value === "priceDesc") {
       renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a,b) => a.price - b.price))
@@ -336,7 +336,7 @@ fetch("https://fakestoreapi.com/products")
     }else if (categoryFilter.value == "electronics"&& sortSelect.value === "za") {
       renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
     }
-    if (categoryFilter.value == "women's clothing"&& sortSelect.value === "selec") {
+    if (categoryFilter.value == "women's clothing"&& sortSelect.value === "priceAsc") {
       renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((b,a) => a.price - b.price))
     }else if (categoryFilter.value == "women's clothing"&& sortSelect.value === "priceDesc") {
       renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a,b) => a.price - b.price))
