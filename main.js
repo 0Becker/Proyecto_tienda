@@ -40,43 +40,33 @@ const loginBtn =document.getElementById("loginBtn");
 // Contenedor productos
 const productsContainer =
   document.getElementById("productsContainer");
-
 // Contenedor carrito
 const cartContainer =
   document.getElementById("cartContainer");
-
 // Total carrito
 const cartTotal =
   document.getElementById("cartTotal");
-
 // Buscador
 const searchInput =
   document.getElementById("searchInput");
-
 // Filtro categorías
 const categoryFilter =
   document.getElementById("categoryFilter");
-
 // Ordenación
 const sortSelect =
   document.getElementById("sortSelect");
-
 // Modal login
 const loginModal =
   document.getElementById("loginModal");
-
 // Botón abrir login
 const accountBtn =
   document.querySelector(".account-btn");
-
 // Botón cerrar login
 const closeLogin =
   document.getElementById("closeLogin");
-
 // Formulario login
 const loginForm =
   document.getElementById("loginForm");
-
 
 // ========================================
 // VARIABLES GLOBALES
@@ -84,16 +74,12 @@ const loginForm =
 
 // Productos API
 let products = [];
-
 // Productos filtrados
 let filteredProducts = [];
-
 // Carrito
 let cart = [];
-
 // Favoritos
-let favorites = [];
-
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];;
 
 // ========================================
 // FASE 1 - FETCH PRODUCTOS
@@ -163,11 +149,109 @@ products.forEach(product => {
 */
 
 
-function getProducts() {
+//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
+fetch('https://fakestoreapi.com/products')
+  .then(response => {
+    if (!response.ok) throw new Error('Error en la petición');
+    return response.json();
+  })
+  .then(data => {
+    products = data;
+    const container = document.querySelector('#productsContainer');
+    if (container) container.innerHTML = '';
+    data.forEach(product => {
+      renderProducts(product);
+    });
+  })
+  .catch(error => {
+    console.error(error);
+  });
+//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
 
-  // TODO
 
+
+
+//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
+//funcion pintarTarjeta
+//funcion pintarTarjeta
+function renderProducts(product) {
+
+  //Crear los elementos
+  const tarjeta = document.createElement("article");
+  const contenedorImagen = document.createElement("div");
+  const imageProduct = document.createElement("img");
+  const info = document.createElement("div");
+  const categoryProduct = document.createElement("p");
+  const titleProduct = document.createElement("h3");
+  const priceProduct = document.createElement("p");
+  const buttons = document.createElement("div");
+  const addBtn = document.createElement("button");
+  const favBtn = document.createElement("button");
+
+  //asignar clases a los elementos 
+  tarjeta.classList.add("product-card");
+  contenedorImagen.classList.add("product-image");
+  imageProduct.setAttribute("src", product.image);
+  imageProduct.setAttribute("alt", product.description);
+  info.classList.add("product-info");
+  categoryProduct.classList.add("product-category");
+  titleProduct.classList.add("product-title");
+  priceProduct.classList.add("product-price");
+  buttons.classList.add("card-actions");
+  addBtn.classList.add("add-btn");
+  favBtn.classList.add("fav-btn");
+
+  // Rellenar el contenido con los datos de la API
+  categoryProduct.textContent = product.category;
+  titleProduct.textContent = product.title;
+  priceProduct.textContent = `${product.price} €`;
+  addBtn.textContent = "Añadir";
+
+  // Comprobar si este producto ya es un favorito guardado para poner el emoji correcto
+  const esFavorito = favorites.some(fav => fav.id === product.id);
+  favBtn.textContent = esFavorito ? "❤️" : "🤍";
+
+  // --- EVENTO DE FAVORITOS ---
+  favBtn.addEventListener('click', () => {
+    // Revisar si el producto ya está en la lista de favoritos
+    const index = favorites.findIndex(fav => fav.id === product.id);
+
+    if (index === -1) {
+      // Si no está, lo agregamos al array
+      favorites.push(product);
+      favBtn.textContent = "❤️";
+      console.log('Agregado a favoritos:', product.title);
+    } else {
+      // Si ya está, lo eliminamos del array
+      favorites.splice(index, 1);
+      favBtn.textContent = "🤍";
+      console.log('Eliminado de favoritos:', product.title);
+    }
+
+    // Guardar la lista actualizada en LocalStorage convirtiéndola en texto
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  });
+
+  //Insertar los elementos en la card
+  tarjeta.prepend(contenedorImagen);
+  tarjeta.append(info);
+  contenedorImagen.append(imageProduct);
+  info.append(categoryProduct, titleProduct, priceProduct, buttons);
+  buttons.prepend(addBtn);
+  buttons.append(favBtn);
+
+  //seleccionamos contenedor donde insertar todo
+  const container = document.querySelector('#productsContainer');
+
+  //añadimos la tarjeta en el contenedor final ya con su botón listo
+  if (container) {
+    container.prepend(tarjeta);
+  }
 }
+console.log(favorites);
+
+//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
+
 
 
 // ========================================
@@ -213,48 +297,6 @@ productsContainer.appendChild(card);
 */
 
 
-function renderProducts(productsArray) {
-  productsContainer.innerHTML = "";
-  // TODO
-  productsArray.forEach(product => {
-    const card = document.createElement("article");
-    card.classList.add("product-card");
-    card.innerHTML = `
-      <h2 class="product-title">${product.title}</h2>
-          <div class="product-image">
-      <img src="${product.image}"  alt="${product.title}">
-            </div>
-
-      <p class="product-price">Precio: $${product.price}</p>
-              <div class="product-info">
-
-      <p>Categoría: ${product.category}</p>
-      </div>
-      
-          <div class="card-actions">
-
-            <button class="add-btn">
-
-              Añadir
-
-            </button>
-
-            <button class="fav-btn">
-
-              🤍
-
-            </button>
-
-          </div>
-          `
-
-    productsContainer.appendChild(card);
-    // console.log(productsArray);
-  });
-
-
-  // TODO
-}
 
 
 // ========================================
@@ -412,7 +454,7 @@ sortSelect.addEventListener(
 /*
 OBJETIVO:
 Añadir productos al carrito.
-
+ 
 TAREAS:
 - Buscar producto por ID
 - Añadir al array carrito
@@ -443,7 +485,7 @@ function removeFromCart(id) {
 /*
 OBJETIVO:
 Pintar carrito dinámicamente.
-
+ 
 MOSTRAR:
 - Nombre
 - Cantidad
@@ -472,13 +514,10 @@ EXTRA
 /*
 OBJETIVO:
 Guardar carrito en localStorage.
-
+ 
 PISTA:
 JSON.stringify()
 */
-
-
-
 
 function saveCart() {
 
@@ -490,7 +529,7 @@ function saveCart() {
 /*
 OBJETIVO:
 Recuperar carrito guardado.
-
+ 
 PISTA:
 JSON.parse()
 */
@@ -516,7 +555,7 @@ EXTRA
 /*
 OBJETIVO:
 Guardar productos favoritos.
-
+ 
 TAREAS:
 - Añadir favoritos
 - Eliminar favoritos
@@ -552,19 +591,19 @@ EXTRA
 /*
 OBJETIVO:
 Simular login con FakeStoreAPI.
-
+ 
 ENDPOINT:
 https://fakestoreapi.com/auth/login
-
+ 
 USUARIO TEST:
 mor_2314
 83r5^_
-
+ 
 CONCEPTOS:
 - fetch POST
 - JSON.stringify()
 - sessionStorage
-
+ 
 TAREAS:
 - Capturar formulario
 - Enviar datos
@@ -622,7 +661,7 @@ EXTRA
 /*
 OBJETIVO:
 Mantener sesión iniciada.
-
+ 
 TAREAS:
 - Detectar token
 - Mostrar login si no existe
@@ -638,7 +677,7 @@ function checkSession() {
 /*
 OBJETIVO:
 Cerrar sesión.
-
+ 
 TAREAS:
 - Eliminar token
 - Cerrar modal
@@ -714,7 +753,7 @@ loginModal.addEventListener(
 /*
 OBJETIVO:
 Inicializar la aplicación.
-
+ 
 TAREAS:
 - Obtener productos
 - Cargar carrito
