@@ -1,5 +1,3 @@
-//const { use } = require("react");
-
 fetch("https://fakestoreapi.com/products")
   .then(res => res.json())
   .then(data => {
@@ -8,7 +6,24 @@ fetch("https://fakestoreapi.com/products")
   .catch(error => console.error("Error fetching products:", error));
 /*
 ========================================
-MINI ECOMMERCE
+MINI ECOMMERCE - BOILERPLATE
+========================================
+
+TECNOLOGÍAS:
+- JavaScript
+- Fetch API
+- LocalStorage
+- SessionStorage
+
+FASES:
+1. Productos
+2. Filtros
+3. Carrito
+4. EXTRA Persistencia
+5. EXTRA Login
+6. EXTRA Sesión
+7. EXTRA Favoritos
+
 ========================================
 */
 
@@ -17,28 +32,66 @@ MINI ECOMMERCE
 // SELECTORES DEL DOM
 // ========================================
 
-const productsContainer = document.getElementById("productsContainer");
-const cartContainer = document.getElementById("cartContainer");
-const cartTotal = document.getElementById("cartTotal");
-const searchInput = document.getElementById("searchInput");
-const categoryFilter = document.getElementById("categoryFilter");
-const sortSelect = document.getElementById("sortSelect");
-const loginModal = document.getElementById("loginModal");
-const accountBtn = document.querySelector(".account-btn");
-const closeLogin = document.getElementById("closeLogin");
-const loginForm = document.getElementById("loginForm");
+//login boton
+const loginBtn =document.getElementById("loginBtn");
+
+// Contenedor productos
+const productsContainer =
+  document.getElementById("productsContainer");
+
+// Contenedor carrito
+const cartContainer =
+  document.getElementById("cartContainer");
+
+// Total carrito
+const cartTotal =
+  document.getElementById("cartTotal");
+
+// Buscador
+const searchInput =
+  document.getElementById("searchInput");
+
+// Filtro categorías
+const categoryFilter =
+  document.getElementById("categoryFilter");
+
+// Ordenación
+const sortSelect =
+  document.getElementById("sortSelect");
+
+// Modal login
+const loginModal =
+  document.getElementById("loginModal");
+
+// Botón abrir login
+const accountBtn =
+  document.querySelector(".account-btn");
+
+// Botón cerrar login
+const closeLogin =
+  document.getElementById("closeLogin");
+
+// Formulario login
+const loginForm =
+  document.getElementById("loginForm");
+
 
 // ========================================
 // VARIABLES GLOBALES
 // ========================================
 
+// Productos API
 let products = [];
+
 // Productos filtrados
 let filteredProducts = [];
+
 // Carrito
 let cart = [];
+
 // Favoritos
-let favorites = JSON.parse(localStorage.getItem('favorites')) || [];;
+let favorites = [];
+
 
 // ========================================
 // FASE 1 - FETCH PRODUCTOS
@@ -67,7 +120,9 @@ TAREAS:
 
 
 /*
+========================================
 ¿QUÉ DEVUELVE LA API?
+========================================
 
 La API devuelve un ARRAY de productos.
 
@@ -84,14 +139,18 @@ Ejemplo:
   }
 ]
 
+========================================
 ¿CÓMO ACCEDER A LOS DATOS?
+========================================
 
 product.title
 product.price
 product.category
 product.image
 
+========================================
 EJEMPLO RECORRIENDO PRODUCTOS
+========================================
 
 products.forEach(product => {
 
@@ -102,109 +161,11 @@ products.forEach(product => {
 */
 
 
-//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
-fetch('https://fakestoreapi.com/products')
-  .then(response => {
-    if (!response.ok) throw new Error('Error en la petición');
-    return response.json();
-  })
-  .then(data => {
-    products = data;
-    const container = document.querySelector('#productsContainer');
-    if (container) container.innerHTML = '';
-    data.forEach(product => {
-      renderProducts(product);
-    });
-  })
-  .catch(error => {
-    console.error(error);
-  });
-//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
+function getProducts() {
 
+  // TODO
 
-
-
-//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
-//funcion pintarTarjeta
-//funcion pintarTarjeta
-function renderProducts(product) {
-
-  //Crear los elementos
-  const tarjeta = document.createElement("article");
-  const contenedorImagen = document.createElement("div");
-  const imageProduct = document.createElement("img");
-  const info = document.createElement("div");
-  const categoryProduct = document.createElement("p");
-  const titleProduct = document.createElement("h3");
-  const priceProduct = document.createElement("p");
-  const buttons = document.createElement("div");
-  const addBtn = document.createElement("button");
-  const favBtn = document.createElement("button");
-
-  //asignar clases a los elementos 
-  tarjeta.classList.add("product-card");
-  contenedorImagen.classList.add("product-image");
-  imageProduct.setAttribute("src", product.image);
-  imageProduct.setAttribute("alt", product.description);
-  info.classList.add("product-info");
-  categoryProduct.classList.add("product-category");
-  titleProduct.classList.add("product-title");
-  priceProduct.classList.add("product-price");
-  buttons.classList.add("card-actions");
-  addBtn.classList.add("add-btn");
-  favBtn.classList.add("fav-btn");
-
-  // Rellenar el contenido con los datos de la API
-  categoryProduct.textContent = product.category;
-  titleProduct.textContent = product.title;
-  priceProduct.textContent = `${product.price} €`;
-  addBtn.textContent = "Añadir";
-
-  // Comprobar si este producto ya es un favorito guardado para poner el emoji correcto
-  const esFavorito = favorites.some(fav => fav.id === product.id);
-  favBtn.textContent = esFavorito ? "❤️" : "🤍";
-
-  // --- EVENTO DE FAVORITOS ---
-  favBtn.addEventListener('click', () => {
-    // Revisar si el producto ya está en la lista de favoritos
-    const index = favorites.findIndex(fav => fav.id === product.id);
-
-    if (index === -1) {
-      // Si no está, lo agregamos al array
-      favorites.push(product);
-      favBtn.textContent = "❤️";
-      console.log('Agregado a favoritos:', product.title);
-    } else {
-      // Si ya está, lo eliminamos del array
-      favorites.splice(index, 1);
-      favBtn.textContent = "🤍";
-      console.log('Eliminado de favoritos:', product.title);
-    }
-
-    // Guardar la lista actualizada en LocalStorage convirtiéndola en texto
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  });
-
-  //Insertar los elementos en la card
-  tarjeta.prepend(contenedorImagen);
-  tarjeta.append(info);
-  contenedorImagen.append(imageProduct);
-  info.append(categoryProduct, titleProduct, priceProduct, buttons);
-  buttons.prepend(addBtn);
-  buttons.append(favBtn);
-
-  //seleccionamos contenedor donde insertar todo
-  const container = document.querySelector('#productsContainer');
-
-  //añadimos la tarjeta en el contenedor final ya con su botón listo
-  if (container) {
-    container.prepend(tarjeta);
-  }
 }
-console.log(favorites);
-
-//-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
-
 
 
 // ========================================
@@ -232,7 +193,9 @@ Usar:
 
 
 /*
+========================================
 PISTA RENDERIZADO
+========================================
 
 Ejemplo creando una card:
 
@@ -244,18 +207,86 @@ card.innerHTML = `
 
 productsContainer.appendChild(card);
 
+========================================
 */
 
+
+function renderProducts(productsArray) {
+  productsContainer.innerHTML = "";
+  // TODO
+  productsArray.forEach(product => {
+    const card = document.createElement("article");
+    card.classList.add("product-card");
+    card.innerHTML = `
+      <h2 class="product-title">${product.title}</h2>
+          <div class="product-image">
+      <img src="${product.image}"  alt="${product.title}">
+            </div>
+
+      <p class="product-price">Precio: $${product.price}</p>
+              <div class="product-info">
+
+      <p>Categoría: ${product.category}</p>
+      </div>
+      
+          <div class="card-actions">
+
+            <button class="add-btn">
+
+              Añadir
+
+            </button>
+
+            <button class="fav-btn">
+
+              🤍
+
+            </button>
+
+          </div>
+          `
+
+    productsContainer.appendChild(card);
+    // console.log(productsArray);
+  });
+
+
+  // TODO
+}
 
 
 // ========================================
 // FASE 2 - CATEGORÍAS
 // ========================================
 
-function renderCategories(productsArray){
+/*
+OBJETIVO:
+Generar categorías dinámicamente.
 
+TAREAS:
+- Obtener categorías únicas
+- Crear options
+- Añadir al select
 
+PISTA:
+new Set()
+*/
 
+function renderCategories(productsArray) {
+
+  // TODO
+  fetch("https://fakestoreapi.com/products")
+    .then(res => res.json())
+    .then(data => {
+      const copia = [... new Set(data.map(producto => producto.category))];
+      copia.forEach(categoria => {
+        const opcion = document.createElement("option");
+        opcion.value = categoria;
+        opcion.textContent = categoria;
+        categoryFilter.appendChild(opcion);
+      })
+    })
+    .catch(error => console.error("Error fetching categories:", error));
 }
 renderCategories();
 
@@ -286,7 +317,66 @@ PISTA:
 
 function filterProducts() {
 
+  // TODO
+  fetch("https://fakestoreapi.com/products")
+    .then(res => res.json())
+    .then(data => {
+      let men = data.filter(producto => producto.category === "men's clothing")
+      if (categoryFilter.value == "all" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
 
+      if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceAsc") {
+        renderProducts(men.filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceDesc") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "az") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "za") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (categoryFilter.value == "jewelery" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (categoryFilter.value == "electronics" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+      if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (searchInput.value) {
+        const buscador = data.filter(producto => producto.title.toLowerCase().includes(searchInput.value.toLowerCase()));
+        renderProducts(buscador);
+      }
+    })
+    .catch(error => console.error("Error filtering products:", error));
 
 }
 
@@ -297,6 +387,20 @@ function filterProducts() {
 // EVENTOS FILTROS
 // ========================================
 
+searchInput.addEventListener(
+  "input",
+  filterProducts
+);
+
+categoryFilter.addEventListener(
+  "change",
+  filterProducts
+);
+
+sortSelect.addEventListener(
+  "change",
+  filterProducts
+);
 
 
 // ========================================
@@ -306,7 +410,7 @@ function filterProducts() {
 /*
 OBJETIVO:
 Añadir productos al carrito.
- 
+
 TAREAS:
 - Buscar producto por ID
 - Añadir al array carrito
@@ -315,26 +419,11 @@ TAREAS:
 - Renderizar carrito
 */
 
+function addToCart(id) {
 
-function buscarProducto(id) {
-  return products.find(product => product.id === id);
+  // TODO
+
 }
-
-function addToCart(id){
-  const product = buscarProducto(id);
-  if (product) {
-    const cartItem = cart.find(item => item.id === id);
-    if (cartItem) {
-      cartItem.quantity++;
-    } else {
-      cart.push({ ...product, quantity: 1 });
-    }
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }
-  return cart;  
-}
-
-
 
 
 /*
@@ -344,18 +433,7 @@ Eliminar producto del carrito.
 
 function removeFromCart(id) {
 
-  let carritoNuevo = [];
-  
-  for (let i = 0; i < cart.length; i++) {
-    if (cart[i].id !== id) {
-      carritoNuevo.push(cart[i]);
-    }
-  }
-
-  cart = carritoNuevo;
-  
-  localStorage.setItem("cart", JSON.stringify(cart));
-  renderCart();
+  // TODO
 
 }
 
@@ -363,13 +441,20 @@ function removeFromCart(id) {
 /*
 OBJETIVO:
 Pintar carrito dinámicamente.
- 
+
 MOSTRAR:
 - Nombre
 - Cantidad
 - Precio
 - Total carrito
 */
+
+function renderCart() {
+
+  // TODO
+
+}
+
 
 // ========================================
 // FASE 4 - LOCAL STORAGE
@@ -385,14 +470,17 @@ EXTRA
 /*
 OBJETIVO:
 Guardar carrito en localStorage.
- 
+
 PISTA:
 JSON.stringify()
 */
 
+
+
+
 function saveCart() {
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+  // TODO
 
 }
 
@@ -400,20 +488,14 @@ function saveCart() {
 /*
 OBJETIVO:
 Recuperar carrito guardado.
- 
+
 PISTA:
 JSON.parse()
 */
 
 function loadCart() {
 
-  let carritoGuardado = localStorage.getItem("cart");
-  
-  if (carritoGuardado) {
-    cart = JSON.parse(carritoGuardado);
-  }
-
-  renderCart();
+  // TODO
 
 }
 
@@ -432,7 +514,7 @@ EXTRA
 /*
 OBJETIVO:
 Guardar productos favoritos.
- 
+
 TAREAS:
 - Añadir favoritos
 - Eliminar favoritos
@@ -442,38 +524,14 @@ TAREAS:
 
 function toggleFavorite(id) {
 
-  let estaEnFavoritos = false;
-
-  for (let i = 0; i < favorites.length; i++) {
-    if (favorites[i] === id) {
-      estaEnFavoritos = true;
-    }
-  }
-
-  if (estaEnFavoritos) {
-    let favoritosNuevos = [];
-    for (let i = 0; i < favorites.length; i++) {
-      if (favorites[i] !== id) {
-        favoritosNuevos.push(favorites[i]);
-      }
-    }
-    favorites = favoritosNuevos;
-  } else {
-    favorites.push(id);
-  }
-
-  localStorage.setItem("favorites", JSON.stringify(favorites));
+  // TODO
 
 }
 
 
 function loadFavorites() {
 
-  let favoritosGuardados = localStorage.getItem("favorites");
-  
-  if (favoritosGuardados) {
-    favorites = JSON.parse(favoritosGuardados);
-  }
+  // TODO
 
 }
 
@@ -492,19 +550,19 @@ EXTRA
 /*
 OBJETIVO:
 Simular login con FakeStoreAPI.
- 
+
 ENDPOINT:
 https://fakestoreapi.com/auth/login
- 
+
 USUARIO TEST:
 mor_2314
 83r5^_
- 
+
 CONCEPTOS:
 - fetch POST
 - JSON.stringify()
 - sessionStorage
- 
+
 TAREAS:
 - Capturar formulario
 - Enviar datos
@@ -542,31 +600,9 @@ loginForm.addEventListener(
 
     e.preventDefault();
 
-    let usuario = loginForm.username.value;
-    let contrasena = loginForm.password.value;
+    // TODO
 
-    let datosLogin = {
-      username: usuario,
-      password: contrasena
-    };
-
-    fetch("https://fakestoreapi.com/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(datosLogin)
-    })
-    .then(respuesta => respuesta.json())
-    .then(datos => {
-      if (datos.token) {
-      sessionStorage.setItem("token", datos.token);
-      loginModal.classList.add("hidden");
-      loginForm.reset();} 
-    })
-    .catch(error => {
-      console.log("Error en login", error);
-    });}
+  }
 );
 
 
@@ -584,7 +620,7 @@ EXTRA
 /*
 OBJETIVO:
 Mantener sesión iniciada.
- 
+
 TAREAS:
 - Detectar token
 - Mostrar login si no existe
@@ -592,12 +628,7 @@ TAREAS:
 
 function checkSession() {
 
-  const token = sessionStorage.getItem("token");
-  if (!token) {
-    loginModal.classList.remove("hidden");
-  } else {
-    loginModal.classList.add("hidden");
-  }
+  // TODO
 
 }
 
@@ -605,7 +636,7 @@ function checkSession() {
 /*
 OBJETIVO:
 Cerrar sesión.
- 
+
 TAREAS:
 - Eliminar token
 - Cerrar modal
@@ -613,8 +644,7 @@ TAREAS:
 
 function logout() {
 
-  sessionStorage.removeItem("token");
-  loginModal.classList.add("hidden");
+  // TODO
 
 }
 
@@ -638,7 +668,9 @@ Abrir modal login.
 accountBtn.addEventListener(
   "click",
   () => {
-    loginModal.classList.remove("hidden");
+
+    // TODO
+
   }
 );
 
@@ -651,8 +683,9 @@ Cerrar modal login.
 closeLogin.addEventListener(
   "click",
   () => {
-    loginModal.classList.add("hidden");
-    loginForm.reset();
+
+    // TODO
+
   }
 );
 
@@ -666,9 +699,7 @@ loginModal.addEventListener(
   "click",
   (e) => {
 
-    if (e.target === loginModal) {
-      loginModal.classList.add("hidden");
-    }
+    // TODO
 
   }
 );
@@ -681,7 +712,7 @@ loginModal.addEventListener(
 /*
 OBJETIVO:
 Inicializar la aplicación.
- 
+
 TAREAS:
 - Obtener productos
 - Cargar carrito
@@ -691,10 +722,7 @@ TAREAS:
 
 function init() {
 
-  getProducts();
-  loadCart();
-  loadFavorites();
-  checkSession();
+  // TODO
 
 }
 
