@@ -391,9 +391,7 @@ JSON.stringify()
 */
 
 function saveCart() {
-
   localStorage.setItem("cart", JSON.stringify(cart));
-
 }
 
 
@@ -406,15 +404,11 @@ JSON.parse()
 */
 
 function loadCart() {
-
   let carritoGuardado = localStorage.getItem("cart");
-  
   if (carritoGuardado) {
     cart = JSON.parse(carritoGuardado);
   }
-
   renderCart();
-
 }
 
 
@@ -573,7 +567,6 @@ loginForm.addEventListener(
 // ========================================
 // FASE 6 - SESIÓN MGUTIERRES
 // ========================================
-
 /*
 ========================================
 EXTRA
@@ -591,14 +584,12 @@ TAREAS:
 */
 
 function checkSession() {
-
   const token = sessionStorage.getItem("token");
   if (!token) {
     loginModal.classList.remove("hidden");
   } else {
     loginModal.classList.add("hidden");
   }
-
 }
 
 
@@ -612,10 +603,8 @@ TAREAS:
 */
 
 function logout() {
-
   sessionStorage.removeItem("token");
   loginModal.classList.add("hidden");
-
 }
 
 
