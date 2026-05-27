@@ -35,66 +35,6 @@ let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 // ========================================
 
 async function getProducts() {
-  try {
-    const response = await fetch("https://fakestoreapi.com/products");
-    const data = await response.json();
-
-    products = data;
-    filteredProducts = data;
-
-    renderProducts(products);
-    renderCategories(products);
-  } catch (error) {
-    console.log("Error obteniendo productos", error);
-  }
-}
-
-// ========================================
-// PINTAR PRODUCTOS
-// ========================================
-
-function renderProducts(productsList) {
-  productsContainer.innerHTML = "";
-
-  for (let i = 0; i < productsList.length; i++) {
-    let product = productsList[i];
-
-    let card = document.createElement("article");
-    card.classList.add("product-card");
-
-    card.innerHTML = `
-      <div class="product-image">
-        <img src="${product.image}" alt="${product.title}">
-      </div>
-      <div class="product-info">
-        <p class="product-category">
-          ${product.category}
-        </p>
-        <h3 class="product-title">
-          ${product.title}
-        </h3>
-        <p class="product-price">
-          ${product.price}€
-        </p>
-        <div class="card-actions">
-          <button
-            class="add-btn"
-            onclick="addToCart(${product.id})"
-          >
-            Añadir
-          </button>
-          <button
-            class="fav-btn"
-            onclick="toggleFavorite(${product.id})"
-          >
-            🤍
-          </button>
-        </div>
-      </div>
-    `;
-
-    productsContainer.appendChild(card);
-  }
 }
 
 // ========================================
@@ -103,21 +43,7 @@ function renderProducts(productsList) {
 
 function renderCategories(productsArray){
 
-  let categoriasUnicas = [];
 
-  for (let i = 0; i < productsArray.length; i++) {
-    let categoria = productsArray[i].category;
-    if (!categoriasUnicas.includes(categoria)) {
-      categoriasUnicas.push(categoria);
-    }
-  }
-
-  for (let i = 0; i < categoriasUnicas.length; i++) {
-    let opcion = document.createElement("option");
-    opcion.value = categoriasUnicas[i];
-    opcion.textContent = categoriasUnicas[i];
-    categoryFilter.appendChild(opcion);
-  }
 
 }
 
@@ -147,78 +73,7 @@ PISTA:
 
 function filterProducts(){
 
-  let textoBusqueda = searchInput.value.toLowerCase();
-  let categoriaSeleccionada = categoryFilter.value;
-  let ordenamiento = sortSelect.value;
 
-  filteredProducts = products;
-
-  // Filtrar por búsqueda
-  let productosFiltrados = [];
-  for (let i = 0; i < filteredProducts.length; i++) {
-    let titulo = filteredProducts[i].title.toLowerCase();
-    if (titulo.includes(textoBusqueda)) {
-      productosFiltrados.push(filteredProducts[i]);
-    }
-  }
-
-  filteredProducts = productosFiltrados;
-
-  // Filtrar por categoría
-  if (categoriaSeleccionada !== "" && categoriaSeleccionada !== "all") {
-    let productosPorCategoria = [];
-    for (let i = 0; i < filteredProducts.length; i++) {
-      if (filteredProducts[i].category === categoriaSeleccionada) {
-        productosPorCategoria.push(filteredProducts[i]);
-      }
-    }
-    filteredProducts = productosPorCategoria;
-  }
-
-  // Ordenar
-  if (ordenamiento === "priceAsc") {
-    for (let i = 0; i < filteredProducts.length; i++) {
-      for (let j = i + 1; j < filteredProducts.length; j++) {
-        if (filteredProducts[i].price > filteredProducts[j].price) {
-          let temporal = filteredProducts[i];
-          filteredProducts[i] = filteredProducts[j];
-          filteredProducts[j] = temporal;
-        }
-      }
-    }
-  } else if (ordenamiento === "priceDesc") {
-    for (let i = 0; i < filteredProducts.length; i++) {
-      for (let j = i + 1; j < filteredProducts.length; j++) {
-        if (filteredProducts[i].price < filteredProducts[j].price) {
-          let temporal = filteredProducts[i];
-          filteredProducts[i] = filteredProducts[j];
-          filteredProducts[j] = temporal;
-        }
-      }
-    }
-  } else if (ordenamiento === "az") {
-    for (let i = 0; i < filteredProducts.length; i++) {
-      for (let j = i + 1; j < filteredProducts.length; j++) {
-        if (filteredProducts[i].title > filteredProducts[j].title) {
-          let temporal = filteredProducts[i];
-          filteredProducts[i] = filteredProducts[j];
-          filteredProducts[j] = temporal;
-        }
-      }
-    }
-  } else if (ordenamiento === "za") {
-    for (let i = 0; i < filteredProducts.length; i++) {
-      for (let j = i + 1; j < filteredProducts.length; j++) {
-        if (filteredProducts[i].title < filteredProducts[j].title) {
-          let temporal = filteredProducts[i];
-          filteredProducts[i] = filteredProducts[j];
-          filteredProducts[j] = temporal;
-        }
-      }
-    }
-  }
-
-  renderProducts(filteredProducts);
 
 }
 
@@ -227,20 +82,6 @@ function filterProducts(){
 // EVENTOS FILTROS
 // ========================================
 
-searchInput.addEventListener(
-  "input",
-  filterProducts
-);
-
-categoryFilter.addEventListener(
-  "change",
-  filterProducts
-);
-
-sortSelect.addEventListener(
-  "change",
-  filterProducts
-);
 
 
 // ========================================
@@ -314,55 +155,6 @@ MOSTRAR:
 - Precio
 - Total carrito
 */
-
-function renderCart() {
-
-  cartContainer.innerHTML = "";
-
-  let total = 0;
-
-  cart.forEach(item => {
-
-    total += item.price * item.quantity;
-
-    cartContainer.innerHTML += `
-
-      <div class="cart-item">
-
-        <div class="cart-item-info">
-
-          <p class="cart-item-title">
-
-            ${item.title}
-
-          </p>
-
-          <p class="cart-item-price">
-
-            ${item.quantity} x ${item.price}€
-
-          </p>
-
-        </div>
-
-        <button
-          class="remove-btn"
-          onclick="removeFromCart(${item.id})"
-        >
-          X
-        </button>
-
-      </div>
-
-    `;
-
-  });
-
-  cartTotal.textContent =
-    total.toFixed(2) + "€";
-
-}
-
 
 // ========================================
 // FASE 4 - LOCAL STORAGE
@@ -529,16 +321,13 @@ loginForm.addEventListener(
     .then(respuesta => respuesta.json())
     .then(datos => {
       if (datos.token) {
-        sessionStorage.setItem("token", datos.token);
-        loginModal.classList.add("hidden");
-        loginForm.reset();
-      }
+      sessionStorage.setItem("token", datos.token);
+      loginModal.classList.add("hidden");
+      loginForm.reset();} 
     })
     .catch(error => {
       console.log("Error en login", error);
-    });
-
-  }
+    });}
 );
 
 

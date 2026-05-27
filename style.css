@@ -114,7 +114,7 @@ nav{
 }
 
 
-.cart-btn{
+.account-btn{
 
   border:none;
 
@@ -135,7 +135,7 @@ nav{
 }
 
 
-.cart-btn:hover{
+.account-btn:hover{
 
   background:var(--primary-hover);
 
