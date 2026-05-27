@@ -1,9 +1,11 @@
+//const { use } = require("react");
+
 fetch("https://fakestoreapi.com/products")
-    .then(res => res.json())
-    .then(data => {
-      console.log(data);
-    })
-    .catch(error => console.error("Error fetching products:", error));
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => console.error("Error fetching products:", error));
 /*
 ========================================
 MINI ECOMMERCE - BOILERPLATE
@@ -31,6 +33,9 @@ FASES:
 // ========================================
 // SELECTORES DEL DOM
 // ========================================
+
+//login boton
+const loginBtn =document.getElementById("loginBtn");
 
 // Contenedor productos
 const productsContainer =
@@ -158,7 +163,7 @@ products.forEach(product => {
 */
 
 
-function getProducts(){
+function getProducts() {
 
   // TODO
 
@@ -208,21 +213,43 @@ productsContainer.appendChild(card);
 */
 
 
-function renderProducts(productsArray){
-productsContainer.innerHTML = "";
+function renderProducts(productsArray) {
+  productsContainer.innerHTML = "";
   // TODO
   productsArray.forEach(product => {
     const card = document.createElement("article");
-
+    card.classList.add("product-card");
     card.innerHTML = `
-      <h2>${product.title}</h2>
-      <img src="${product.image}" class="product-image" alt="${product.title}">
-      <p>Precio: $${product.price}</p>
+      <h2 class="product-title">${product.title}</h2>
+          <div class="product-image">
+      <img src="${product.image}"  alt="${product.title}">
+            </div>
+
+      <p class="product-price">Precio: $${product.price}</p>
+              <div class="product-info">
+
       <p>Categoría: ${product.category}</p>
-          `;
+      </div>
+      
+          <div class="card-actions">
+
+            <button class="add-btn">
+
+              Añadir
+
+            </button>
+
+            <button class="fav-btn">
+
+              🤍
+
+            </button>
+
+          </div>
+          `
 
     productsContainer.appendChild(card);
- // console.log(productsArray);
+    // console.log(productsArray);
   });
 
 
@@ -247,14 +274,14 @@ PISTA:
 new Set()
 */
 
-function renderCategories(productsArray){
+function renderCategories(productsArray) {
 
   // TODO
- fetch("https://fakestoreapi.com/products")
+  fetch("https://fakestoreapi.com/products")
     .then(res => res.json())
     .then(data => {
       const copia = [... new Set(data.map(producto => producto.category))];
-      copia.forEach(categoria=>{
+      copia.forEach(categoria => {
         const opcion = document.createElement("option");
         opcion.value = categoria;
         opcion.textContent = categoria;
@@ -290,74 +317,74 @@ PISTA:
 - localeCompare()
 */
 
-function filterProducts(){
+function filterProducts() {
 
   // TODO
-fetch("https://fakestoreapi.com/products")
+  fetch("https://fakestoreapi.com/products")
     .then(res => res.json())
     .then(data => {
-           let men=data.filter(producto => producto.category === "men's clothing")
-         if (categoryFilter.value=="all"&&sortSelect.value === "priceAsc") {
-          renderProducts(data.filter(producto => producto.price).sort((b,a) => a.price - b.price))
-    } else if (categoryFilter.value=="all"&& sortSelect.value === "priceDesc") {
-      renderProducts(data.filter(producto => producto.price).sort((a,b) => a.price - b.price))
-    }else if (categoryFilter.value=="all"&& sortSelect.value === "az") {
-      renderProducts(data.filter(producto => producto.price).sort((a,b) => a.title.localeCompare(b.title)))
-    }else if (categoryFilter.value=="all"&& sortSelect.value === "za") {
-      renderProducts(data.filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
-    }
+      let men = data.filter(producto => producto.category === "men's clothing")
+      if (categoryFilter.value == "all" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
 
-    if (categoryFilter.value == "men's clothing"&& sortSelect.value === "priceAsc") {
-      renderProducts(men.filter(producto => producto.price).sort((b,a) => a.price - b.price))
-    }else if (categoryFilter.value == "men's clothing"&& sortSelect.value === "priceDesc") {
-      renderProducts(men.filter(producto => producto.price).sort((a,b) => a.price - b.price))
-    }else if (categoryFilter.value == "men's clothing"&& sortSelect.value === "az") {
-      renderProducts(men.filter(producto => producto.price).sort((a,b) => a.title.localeCompare(b.title)))
-    }else if (categoryFilter.value == "men's clothing"&& sortSelect.value === "za") {
-      renderProducts(men.filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
-    }
+      if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceAsc") {
+        renderProducts(men.filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceDesc") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "az") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "za") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
 
-    if (categoryFilter.value == "jewelery"&& sortSelect.value === "priceAsc") {
-      renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((b,a) => a.price - b.price))
-    }else if (categoryFilter.value == "jewelery"&& sortSelect.value === "priceDesc") {
-      renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a,b) => a.price - b.price))
-    }else if (categoryFilter.value == "jewelery"&& sortSelect.value === "az") {
-      renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a,b) => a.title.localeCompare(b.title)))
-    }else if (categoryFilter.value == "jewelery"&& sortSelect.value === "za") {
-      renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
-    }
+      if (categoryFilter.value == "jewelery" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
 
-    if (categoryFilter.value == "electronics"&& sortSelect.value === "priceAsc") {
-      renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((b,a) => a.price - b.price))
-    }else if (categoryFilter.value == "electronics"&& sortSelect.value === "priceDesc") {
-      renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a,b) => a.price - b.price))
-    }else if (categoryFilter.value == "electronics"&& sortSelect.value === "az") {
-      renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a,b) => a.title.localeCompare(b.title)))
-    }else if (categoryFilter.value == "electronics"&& sortSelect.value === "za") {
-      renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
-    }
-    if (categoryFilter.value == "women's clothing"&& sortSelect.value === "priceAsc") {
-      renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((b,a) => a.price - b.price))
-    }else if (categoryFilter.value == "women's clothing"&& sortSelect.value === "priceDesc") {
-      renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a,b) => a.price - b.price))
-    }else if (categoryFilter.value == "women's clothing"&& sortSelect.value === "az") {
-      renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a,b) => a.title.localeCompare(b.title)))
-    }else if (categoryFilter.value == "women's clothing"&& sortSelect.value === "za") {
-      renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a,b) => b.title.localeCompare(a.title)))
-    }
+      if (categoryFilter.value == "electronics" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+      if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
 
-  if (searchInput.value) {
-    const buscador = data.filter(producto => producto.title.toLowerCase().includes(searchInput.value.toLowerCase()));
-    renderProducts(buscador); 
-  }
-  })        
-  .catch(error => console.error("Error filtering products:", error));
+      if (searchInput.value) {
+        const buscador = data.filter(producto => producto.title.toLowerCase().includes(searchInput.value.toLowerCase()));
+        renderProducts(buscador);
+      }
+    })
+    .catch(error => console.error("Error filtering products:", error));
 
 }
 
 
 
-     
+
 // ========================================
 // EVENTOS FILTROS
 // ========================================
@@ -394,7 +421,7 @@ TAREAS:
 - Renderizar carrito
 */
 
-function addToCart(id){
+function addToCart(id) {
 
   // TODO
 
@@ -406,7 +433,7 @@ OBJETIVO:
 Eliminar producto del carrito.
 */
 
-function removeFromCart(id){
+function removeFromCart(id) {
 
   // TODO
 
@@ -424,7 +451,7 @@ MOSTRAR:
 - Total carrito
 */
 
-function renderCart(){
+function renderCart() {
 
   // TODO
 
@@ -450,7 +477,10 @@ PISTA:
 JSON.stringify()
 */
 
-function saveCart(){
+
+
+
+function saveCart() {
 
   // TODO
 
@@ -465,7 +495,7 @@ PISTA:
 JSON.parse()
 */
 
-function loadCart(){
+function loadCart() {
 
   // TODO
 
@@ -494,14 +524,14 @@ TAREAS:
 - Recuperar favoritos
 */
 
-function toggleFavorite(id){
+function toggleFavorite(id) {
 
   // TODO
 
 }
 
 
-function loadFavorites(){
+function loadFavorites() {
 
   // TODO
 
@@ -542,6 +572,30 @@ TAREAS:
 - Cerrar modal
 */
 
+loginBtn.addEventListener("click",() => {
+  loginModal.classList.toggle("hidden");
+  const credentials = { username: 'johnd', password: 'm38rmF$' };
+fetch('https://fakestoreapi.com/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(credentials)
+})
+  .then(response => response.json())
+  .then(data => {
+    console.log("¡Esta es la respuesta de la API!");
+    console.log(data); // Aquí verás el token en la consola
+
+    // GUARDAR TOKEN: Guardamos el token que nos dio la API
+    sessionStorage.setItem('token', data.token);
+  });
+});
+
+closeLogin.addEventListener("click",() => {
+  loginModal.classList.toggle("hidden");
+});
+
+
+
 loginForm.addEventListener(
   "submit",
   (e) => {
@@ -574,7 +628,7 @@ TAREAS:
 - Mostrar login si no existe
 */
 
-function checkSession(){
+function checkSession() {
 
   // TODO
 
@@ -590,7 +644,7 @@ TAREAS:
 - Cerrar modal
 */
 
-function logout(){
+function logout() {
 
   // TODO
 
@@ -668,7 +722,7 @@ TAREAS:
 - Comprobar sesión
 */
 
-function init(){
+function init() {
 
   // TODO
 

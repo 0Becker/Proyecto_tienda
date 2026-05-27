@@ -8,6 +8,9 @@ RESET
   box-sizing:border-box;
 }
 
+.prueba{
+  background: red;
+}
 
 /* ========================================
 VARIABLES
@@ -336,6 +339,7 @@ CARD PRODUCTO
 .product-card{
 
   background:white;
+  padding: 10px;
 
   border-radius:24px;
 
@@ -344,7 +348,6 @@ CARD PRODUCTO
   transition:0.3s;
 
   box-shadow:0 8px 20px rgba(0,0,0,0.05);
-
 }
 
 
@@ -408,7 +411,7 @@ CARD PRODUCTO
 
 
 .product-title{
-
+  text-align: center;
   font-size:18px;
 
   margin-bottom:15px;
