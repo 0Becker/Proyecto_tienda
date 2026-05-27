@@ -279,7 +279,7 @@ OBJETIVO:
 Simular login con FakeStoreAPI.
 
 ENDPOINT:
-https://fakestoreapi.com/auth/login
+https://fakestoreapi.com/auth/login 
 
 USUARIO TEST:
 mor_2314
@@ -381,7 +381,7 @@ function logout(){
 
 
 // ========================================
-// MODAL LOGIN
+// MODAL LOGIN MGUTIERRES
 // ========================================
 
 /*
