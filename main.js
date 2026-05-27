@@ -1,3 +1,11 @@
+//const { use } = require("react");
+
+fetch("https://fakestoreapi.com/products")
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => console.error("Error fetching products:", error));
 /*
 ========================================
 MINI ECOMMERCE
@@ -34,7 +42,83 @@ let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 // FASE 1 - OBTENER PRODUCTOS
 // ========================================
 
-async function getProducts() {
+/*
+OBJETIVO:
+Pintar productos dinámicamente.
+
+MOSTRAR:
+- Imagen
+- Título
+- Precio
+- Categoría
+- Botón carrito
+- Botón favorito
+
+PISTA:
+Usar:
+- innerHTML
+- createElement
+- appendChild
+*/
+
+
+/*
+PISTA RENDERIZADO
+
+Ejemplo creando una card:
+
+const card = document.createElement("article");
+
+card.innerHTML = `
+  <h2>${product.title}</h2>
+`;
+
+productsContainer.appendChild(card);
+
+*/
+
+
+function renderProducts(productsArray) {
+  productsContainer.innerHTML = "";
+  // TODO
+  productsArray.forEach(product => {
+    const card = document.createElement("article");
+    card.classList.add("product-card");
+    card.innerHTML = `
+      <h2 class="product-title">${product.title}</h2>
+          <div class="product-image">
+      <img src="${product.image}"  alt="${product.title}">
+            </div>
+
+      <p class="product-price">Precio: $${product.price}</p>
+              <div class="product-info">
+
+      <p>Categoría: ${product.category}</p>
+      </div>
+      
+          <div class="card-actions">
+
+            <button class="add-btn">
+
+              Añadir
+
+            </button>
+
+            <button class="fav-btn">
+
+              🤍
+
+            </button>
+
+          </div>
+          `
+
+    productsContainer.appendChild(card);
+    // console.log(productsArray);
+  });
+
+
+  // TODO
 }
 
 // ========================================
@@ -46,6 +130,8 @@ function renderCategories(productsArray){
 
 
 }
+renderCategories();
+
 
 
 // ========================================
@@ -71,11 +157,13 @@ PISTA:
 - localeCompare()
 */
 
-function filterProducts(){
+function filterProducts() {
 
 
 
 }
+
+
 
 
 // ========================================
@@ -127,7 +215,7 @@ OBJETIVO:
 Eliminar producto del carrito.
 */
 
-function removeFromCart(id){
+function removeFromCart(id) {
 
   let carritoNuevo = [];
   
@@ -175,7 +263,10 @@ PISTA:
 JSON.stringify()
 */
 
-function saveCart(){
+
+
+
+function saveCart() {
 
   localStorage.setItem("cart", JSON.stringify(cart));
 
@@ -190,7 +281,7 @@ PISTA:
 JSON.parse()
 */
 
-function loadCart(){
+function loadCart() {
 
   let carritoGuardado = localStorage.getItem("cart");
   
@@ -225,7 +316,7 @@ TAREAS:
 - Recuperar favoritos
 */
 
-function toggleFavorite(id){
+function toggleFavorite(id) {
 
   let estaEnFavoritos = false;
 
@@ -252,7 +343,7 @@ function toggleFavorite(id){
 }
 
 
-function loadFavorites(){
+function loadFavorites() {
 
   let favoritosGuardados = localStorage.getItem("favorites");
   
@@ -296,6 +387,30 @@ TAREAS:
 - Guardar token
 - Cerrar modal
 */
+
+loginBtn.addEventListener("click",() => {
+  loginModal.classList.toggle("hidden");
+  const credentials = { username: 'johnd', password: 'm38rmF$' };
+fetch('https://fakestoreapi.com/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(credentials)
+})
+  .then(response => response.json())
+  .then(data => {
+    console.log("¡Esta es la respuesta de la API!");
+    console.log(data); // Aquí verás el token en la consola
+
+    // GUARDAR TOKEN: Guardamos el token que nos dio la API
+    sessionStorage.setItem('token', data.token);
+  });
+});
+
+closeLogin.addEventListener("click",() => {
+  loginModal.classList.toggle("hidden");
+});
+
+
 
 loginForm.addEventListener(
   "submit",
@@ -351,7 +466,7 @@ TAREAS:
 - Mostrar login si no existe
 */
 
-function checkSession(){
+function checkSession() {
 
   const token = sessionStorage.getItem("token");
   if (!token) {
@@ -372,7 +487,7 @@ TAREAS:
 - Cerrar modal
 */
 
-function logout(){
+function logout() {
 
   sessionStorage.removeItem("token");
   loginModal.classList.add("hidden");
@@ -450,7 +565,7 @@ TAREAS:
 - Comprobar sesión
 */
 
-function init(){
+function init() {
 
   getProducts();
   loadCart();
