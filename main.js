@@ -206,7 +206,7 @@ function loadCart(){
 // ========================================
 // FASE 7 - FAVORITOS
 // ========================================
-
+// No aceptar en la PULL REQUES ESTA FASE 
 /*
 ========================================
 EXTRA
@@ -264,7 +264,7 @@ function loadFavorites(){
 
 
 // ========================================
-// FASE 5 - LOGIN
+// FASE 5 - LOGIN MGUTIERRES 2
 // ========================================
 
 /*
@@ -332,7 +332,7 @@ loginForm.addEventListener(
 
 
 // ========================================
-// FASE 6 - SESIÓN
+// FASE 6 - SESIÓN MGUTIERRES
 // ========================================
 
 /*
