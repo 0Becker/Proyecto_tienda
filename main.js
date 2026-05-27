@@ -8,24 +8,7 @@ fetch("https://fakestoreapi.com/products")
   .catch(error => console.error("Error fetching products:", error));
 /*
 ========================================
-MINI ECOMMERCE - BOILERPLATE
-========================================
-
-TECNOLOGÍAS:
-- JavaScript
-- Fetch API
-- LocalStorage
-- SessionStorage
-
-FASES:
-1. Productos
-2. Filtros
-3. Carrito
-4. EXTRA Persistencia
-5. EXTRA Login
-6. EXTRA Sesión
-7. EXTRA Favoritos
-
+MINI ECOMMERCE
 ========================================
 */
 
@@ -34,45 +17,21 @@ FASES:
 // SELECTORES DEL DOM
 // ========================================
 
-//login boton
-const loginBtn =document.getElementById("loginBtn");
-
-// Contenedor productos
-const productsContainer =
-  document.getElementById("productsContainer");
-// Contenedor carrito
-const cartContainer =
-  document.getElementById("cartContainer");
-// Total carrito
-const cartTotal =
-  document.getElementById("cartTotal");
-// Buscador
-const searchInput =
-  document.getElementById("searchInput");
-// Filtro categorías
-const categoryFilter =
-  document.getElementById("categoryFilter");
-// Ordenación
-const sortSelect =
-  document.getElementById("sortSelect");
-// Modal login
-const loginModal =
-  document.getElementById("loginModal");
-// Botón abrir login
-const accountBtn =
-  document.querySelector(".account-btn");
-// Botón cerrar login
-const closeLogin =
-  document.getElementById("closeLogin");
-// Formulario login
-const loginForm =
-  document.getElementById("loginForm");
+const productsContainer = document.getElementById("productsContainer");
+const cartContainer = document.getElementById("cartContainer");
+const cartTotal = document.getElementById("cartTotal");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+const sortSelect = document.getElementById("sortSelect");
+const loginModal = document.getElementById("loginModal");
+const accountBtn = document.querySelector(".account-btn");
+const closeLogin = document.getElementById("closeLogin");
+const loginForm = document.getElementById("loginForm");
 
 // ========================================
 // VARIABLES GLOBALES
 // ========================================
 
-// Productos API
 let products = [];
 // Productos filtrados
 let filteredProducts = [];
@@ -108,9 +67,7 @@ TAREAS:
 
 
 /*
-========================================
 ¿QUÉ DEVUELVE LA API?
-========================================
 
 La API devuelve un ARRAY de productos.
 
@@ -127,18 +84,14 @@ Ejemplo:
   }
 ]
 
-========================================
 ¿CÓMO ACCEDER A LOS DATOS?
-========================================
 
 product.title
 product.price
 product.category
 product.image
 
-========================================
 EJEMPLO RECORRIENDO PRODUCTOS
-========================================
 
 products.forEach(product => {
 
@@ -279,9 +232,7 @@ Usar:
 
 
 /*
-========================================
 PISTA RENDERIZADO
-========================================
 
 Ejemplo creando una card:
 
@@ -293,9 +244,7 @@ card.innerHTML = `
 
 productsContainer.appendChild(card);
 
-========================================
 */
-
 
 
 
@@ -303,34 +252,10 @@ productsContainer.appendChild(card);
 // FASE 2 - CATEGORÍAS
 // ========================================
 
-/*
-OBJETIVO:
-Generar categorías dinámicamente.
+function renderCategories(productsArray){
 
-TAREAS:
-- Obtener categorías únicas
-- Crear options
-- Añadir al select
 
-PISTA:
-new Set()
-*/
 
-function renderCategories(productsArray) {
-
-  // TODO
-  fetch("https://fakestoreapi.com/products")
-    .then(res => res.json())
-    .then(data => {
-      const copia = [... new Set(data.map(producto => producto.category))];
-      copia.forEach(categoria => {
-        const opcion = document.createElement("option");
-        opcion.value = categoria;
-        opcion.textContent = categoria;
-        categoryFilter.appendChild(opcion);
-      })
-    })
-    .catch(error => console.error("Error fetching categories:", error));
 }
 renderCategories();
 
@@ -361,66 +286,7 @@ PISTA:
 
 function filterProducts() {
 
-  // TODO
-  fetch("https://fakestoreapi.com/products")
-    .then(res => res.json())
-    .then(data => {
-      let men = data.filter(producto => producto.category === "men's clothing")
-      if (categoryFilter.value == "all" && sortSelect.value === "priceAsc") {
-        renderProducts(data.filter(producto => producto.price).sort((b, a) => a.price - b.price))
-      } else if (categoryFilter.value == "all" && sortSelect.value === "priceDesc") {
-        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.price - b.price))
-      } else if (categoryFilter.value == "all" && sortSelect.value === "az") {
-        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
-      } else if (categoryFilter.value == "all" && sortSelect.value === "za") {
-        renderProducts(data.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
-      }
 
-      if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceAsc") {
-        renderProducts(men.filter(producto => producto.price).sort((b, a) => a.price - b.price))
-      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceDesc") {
-        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.price - b.price))
-      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "az") {
-        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
-      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "za") {
-        renderProducts(men.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
-      }
-
-      if (categoryFilter.value == "jewelery" && sortSelect.value === "priceAsc") {
-        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((b, a) => a.price - b.price))
-      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "priceDesc") {
-        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.price - b.price))
-      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "az") {
-        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
-      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "za") {
-        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
-      }
-
-      if (categoryFilter.value == "electronics" && sortSelect.value === "priceAsc") {
-        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((b, a) => a.price - b.price))
-      } else if (categoryFilter.value == "electronics" && sortSelect.value === "priceDesc") {
-        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.price - b.price))
-      } else if (categoryFilter.value == "electronics" && sortSelect.value === "az") {
-        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
-      } else if (categoryFilter.value == "electronics" && sortSelect.value === "za") {
-        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
-      }
-      if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceAsc") {
-        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((b, a) => a.price - b.price))
-      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceDesc") {
-        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.price - b.price))
-      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "az") {
-        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
-      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "za") {
-        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
-      }
-
-      if (searchInput.value) {
-        const buscador = data.filter(producto => producto.title.toLowerCase().includes(searchInput.value.toLowerCase()));
-        renderProducts(buscador);
-      }
-    })
-    .catch(error => console.error("Error filtering products:", error));
 
 }
 
@@ -431,20 +297,6 @@ function filterProducts() {
 // EVENTOS FILTROS
 // ========================================
 
-searchInput.addEventListener(
-  "input",
-  filterProducts
-);
-
-categoryFilter.addEventListener(
-  "change",
-  filterProducts
-);
-
-sortSelect.addEventListener(
-  "change",
-  filterProducts
-);
 
 
 // ========================================
@@ -463,11 +315,26 @@ TAREAS:
 - Renderizar carrito
 */
 
-function addToCart(id) {
 
-  // TODO
-
+function buscarProducto(id) {
+  return products.find(product => product.id === id);
 }
+
+function addToCart(id){
+  const product = buscarProducto(id);
+  if (product) {
+    const cartItem = cart.find(item => item.id === id);
+    if (cartItem) {
+      cartItem.quantity++;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+  return cart;  
+}
+
+
 
 
 /*
@@ -477,7 +344,18 @@ Eliminar producto del carrito.
 
 function removeFromCart(id) {
 
-  // TODO
+  let carritoNuevo = [];
+  
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].id !== id) {
+      carritoNuevo.push(cart[i]);
+    }
+  }
+
+  cart = carritoNuevo;
+  
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
 
 }
 
@@ -492,13 +370,6 @@ MOSTRAR:
 - Precio
 - Total carrito
 */
-
-function renderCart() {
-
-  // TODO
-
-}
-
 
 // ========================================
 // FASE 4 - LOCAL STORAGE
@@ -521,7 +392,7 @@ JSON.stringify()
 
 function saveCart() {
 
-  // TODO
+  localStorage.setItem("cart", JSON.stringify(cart));
 
 }
 
@@ -536,7 +407,13 @@ JSON.parse()
 
 function loadCart() {
 
-  // TODO
+  let carritoGuardado = localStorage.getItem("cart");
+  
+  if (carritoGuardado) {
+    cart = JSON.parse(carritoGuardado);
+  }
+
+  renderCart();
 
 }
 
@@ -565,14 +442,38 @@ TAREAS:
 
 function toggleFavorite(id) {
 
-  // TODO
+  let estaEnFavoritos = false;
+
+  for (let i = 0; i < favorites.length; i++) {
+    if (favorites[i] === id) {
+      estaEnFavoritos = true;
+    }
+  }
+
+  if (estaEnFavoritos) {
+    let favoritosNuevos = [];
+    for (let i = 0; i < favorites.length; i++) {
+      if (favorites[i] !== id) {
+        favoritosNuevos.push(favorites[i]);
+      }
+    }
+    favorites = favoritosNuevos;
+  } else {
+    favorites.push(id);
+  }
+
+  localStorage.setItem("favorites", JSON.stringify(favorites));
 
 }
 
 
 function loadFavorites() {
 
-  // TODO
+  let favoritosGuardados = localStorage.getItem("favorites");
+  
+  if (favoritosGuardados) {
+    favorites = JSON.parse(favoritosGuardados);
+  }
 
 }
 
@@ -641,9 +542,31 @@ loginForm.addEventListener(
 
     e.preventDefault();
 
-    // TODO
+    let usuario = loginForm.username.value;
+    let contrasena = loginForm.password.value;
 
-  }
+    let datosLogin = {
+      username: usuario,
+      password: contrasena
+    };
+
+    fetch("https://fakestoreapi.com/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosLogin)
+    })
+    .then(respuesta => respuesta.json())
+    .then(datos => {
+      if (datos.token) {
+      sessionStorage.setItem("token", datos.token);
+      loginModal.classList.add("hidden");
+      loginForm.reset();} 
+    })
+    .catch(error => {
+      console.log("Error en login", error);
+    });}
 );
 
 
@@ -669,7 +592,12 @@ TAREAS:
 
 function checkSession() {
 
-  // TODO
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    loginModal.classList.remove("hidden");
+  } else {
+    loginModal.classList.add("hidden");
+  }
 
 }
 
@@ -685,7 +613,8 @@ TAREAS:
 
 function logout() {
 
-  // TODO
+  sessionStorage.removeItem("token");
+  loginModal.classList.add("hidden");
 
 }
 
@@ -709,9 +638,7 @@ Abrir modal login.
 accountBtn.addEventListener(
   "click",
   () => {
-
-    // TODO
-
+    loginModal.classList.remove("hidden");
   }
 );
 
@@ -724,9 +651,8 @@ Cerrar modal login.
 closeLogin.addEventListener(
   "click",
   () => {
-
-    // TODO
-
+    loginModal.classList.add("hidden");
+    loginForm.reset();
   }
 );
 
@@ -740,7 +666,9 @@ loginModal.addEventListener(
   "click",
   (e) => {
 
-    // TODO
+    if (e.target === loginModal) {
+      loginModal.classList.add("hidden");
+    }
 
   }
 );
@@ -763,7 +691,10 @@ TAREAS:
 
 function init() {
 
-  // TODO
+  getProducts();
+  loadCart();
+  loadFavorites();
+  checkSession();
 
 }
 
