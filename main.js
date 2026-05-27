@@ -1,23 +1,6 @@
 /*
 ========================================
-MINI ECOMMERCE - BOILERPLATE
-========================================
-
-TECNOLOGÍAS:
-- JavaScript
-- Fetch API
-- LocalStorage
-- SessionStorage
-
-FASES:
-1. Productos
-2. Filtros
-3. Carrito
-4. EXTRA Persistencia
-5. EXTRA Login
-6. EXTRA Sesión
-7. EXTRA Favoritos
-
+MINI ECOMMERCE
 ========================================
 */
 
@@ -26,330 +9,115 @@ FASES:
 // SELECTORES DEL DOM
 // ========================================
 
-// Contenedor productos
-const productsContainer =
-  document.getElementById("productsContainer");
-
-// Contenedor carrito
-const cartContainer =
-  document.getElementById("cartContainer");
-
-// Total carrito
-const cartTotal =
-  document.getElementById("cartTotal");
-
-// Buscador
-const searchInput =
-  document.getElementById("searchInput");
-
-// Filtro categorías
-const categoryFilter =
-  document.getElementById("categoryFilter");
-
-// Ordenación
-const sortSelect =
-  document.getElementById("sortSelect");
-
-// Modal login
-const loginModal =
-  document.getElementById("loginModal");
-
-// Botón abrir login
-const accountBtn =
-  document.querySelector(".account-btn");
-
-// Botón cerrar login
-const closeLogin =
-  document.getElementById("closeLogin");
-
-// Formulario login
-const loginForm =
-  document.getElementById("loginForm");
+const productsContainer = document.getElementById("productsContainer");
+const cartContainer = document.getElementById("cartContainer");
+const cartTotal = document.getElementById("cartTotal");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+const sortSelect = document.getElementById("sortSelect");
+const loginModal = document.getElementById("loginModal");
+const accountBtn = document.querySelector(".account-btn");
+const closeLogin = document.getElementById("closeLogin");
+const loginForm = document.getElementById("loginForm");
 
 
 // ========================================
 // VARIABLES GLOBALES
 // ========================================
 
-// Productos API
 let products = [];
-// Productos filtrados
 let filteredProducts = [];
-
-// Carrito
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-// Favoritos
-let favorites = [];
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
 // ========================================
-// FASE 1 - FETCH PRODUCTOS
+// FASE 1 - OBTENER PRODUCTOS
 // ========================================
-
-/*
-OBJETIVO:
-Obtener productos desde la API.
-
-ENDPOINT:
-https://fakestoreapi.com/products
-
-CONCEPTOS:
-- fetch()
-- promesas
-- .then()
-- .catch()
-
-TAREAS:
-- Hacer petición fetch
-- Convertir respuesta a JSON
-- Guardar productos
-- Pintar productos
-- Pintar categorías
-*/
-
-
-/*
-========================================
-¿QUÉ DEVUELVE LA API?
-========================================
-
-La API devuelve un ARRAY de productos.
-
-Ejemplo:
-
-[
-  {
-    id: 1,
-    title: "Fjallraven Backpack",
-    price: 109.95,
-    description: "Your perfect pack...",
-    category: "men's clothing",
-    image: "https://fakestoreapi.com/img/..."
-  }
-]
-
-========================================
-¿CÓMO ACCEDER A LOS DATOS?
-========================================
-
-product.title
-product.price
-product.category
-product.image
-
-========================================
-EJEMPLO RECORRIENDO PRODUCTOS
-========================================
-
-products.forEach(product => {
-
-  console.log(product.title);
-
-});
-
-*/
-
-
 
 async function getProducts() {
-
   try {
-
-    const response =
-      await fetch("https://fakestoreapi.com/products");
-
+    const response = await fetch("https://fakestoreapi.com/products");
     const data = await response.json();
 
     products = data;
-
     filteredProducts = data;
 
     renderProducts(products);
-
     renderCategories(products);
-
   } catch (error) {
-
     console.log("Error obteniendo productos", error);
-
   }
-
 }
 
-function renderProducts(productsList) {
+// ========================================
+// PINTAR PRODUCTOS
+// ========================================
 
+function renderProducts(productsList) {
   productsContainer.innerHTML = "";
 
-  productsList.forEach(product => {
+  for (let i = 0; i < productsList.length; i++) {
+    let product = productsList[i];
 
-    const card = document.createElement("article");
-
+    let card = document.createElement("article");
     card.classList.add("product-card");
 
     card.innerHTML = `
-
       <div class="product-image">
-
         <img src="${product.image}" alt="${product.title}">
-
       </div>
-
       <div class="product-info">
-
         <p class="product-category">
-
           ${product.category}
-
         </p>
-
         <h3 class="product-title">
-
           ${product.title}
-
         </h3>
-
         <p class="product-price">
-
           ${product.price}€
-
         </p>
-
         <div class="card-actions">
-
           <button
             class="add-btn"
             onclick="addToCart(${product.id})"
           >
             Añadir
           </button>
-
           <button
             class="fav-btn"
             onclick="toggleFavorite(${product.id})"
           >
             🤍
           </button>
-
         </div>
-
       </div>
-
     `;
 
     productsContainer.appendChild(card);
-
-  });
-
+  }
 }
 
-/*
-OBJETIVO:
-Pintar productos dinámicamente.
-
-MOSTRAR:
-- Imagen
-- Título
-- Precio
-- Categoría
-- Botón carrito
-- Botón favorito
-
-PISTA:
-Usar:
-- innerHTML
-- createElement
-- appendChild
-*/
-
-let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-
-const productsContainer = document.getElementById("productsContainer");
-
-const cartContainer = document.getElementById("cartContainer");
-
-const cartTotal = document.getElementById("cartTotal");
-
-
-function obtenerProductosDelHTML() {
-
-  const cards = document.querySelectorAll(".product-card");
-
-  return [...cards].map((card, index) => {
-
-    return {
-      id: index + 1,
-      nombre: card.querySelector(".product-title").textContent,
-      precio: parseFloat(
-        card.querySelector(".product-price")
-          .textContent.replace("€", "")
-      ),
-      categoria: card.querySelector(".product-category").textContent,
-      imagen: card.querySelector("img").src
-    };
-
-  });
-
-}
-/*
-========================================
-PISTA RENDERIZADO
-========================================
-
-Ejemplo creando una card:
-
-const card = document.createElement("article");
-
-card.innerHTML = `
-  <h2>${product.title}</h2>
-`;
-
-productsContainer.appendChild(card);
-
-========================================
-*/
-
-/*
-const card = document.createElement("article");
-
-card.innerHTML = `
-  <h2>${product.title}</h2>
-`;productsContainer.appendChild(card);
-function renderProducts(productsArray){ 
-
-  productsArray.forEach(product => {
-
-    const card = document.createElement("article");
-
-    card.innerHTML = `
-      <h2>${product.title}</h2>
-    `;
-
-    productsContainer.appendChild(card);
-  });
-
-} */
-
-
-/* ========================================
+// ========================================
 // FASE 2 - CATEGORÍAS
 // ========================================
 
-/*
-OBJETIVO:
-Generar categorías dinámicamente.
-
-TAREAS:
-- Obtener categorías únicas
-- Crear options
-- Añadir al select
-
-PISTA:
-new Set()
-*/
-
 function renderCategories(productsArray){
 
-  // TODO
+  let categoriasUnicas = [];
+
+  for (let i = 0; i < productsArray.length; i++) {
+    let categoria = productsArray[i].category;
+    if (!categoriasUnicas.includes(categoria)) {
+      categoriasUnicas.push(categoria);
+    }
+  }
+
+  for (let i = 0; i < categoriasUnicas.length; i++) {
+    let opcion = document.createElement("option");
+    opcion.value = categoriasUnicas[i];
+    opcion.textContent = categoriasUnicas[i];
+    categoryFilter.appendChild(opcion);
+  }
 
 }
 
@@ -379,7 +147,78 @@ PISTA:
 
 function filterProducts(){
 
-  // TODO
+  let textoBusqueda = searchInput.value.toLowerCase();
+  let categoriaSeleccionada = categoryFilter.value;
+  let ordenamiento = sortSelect.value;
+
+  filteredProducts = products;
+
+  // Filtrar por búsqueda
+  let productosFiltrados = [];
+  for (let i = 0; i < filteredProducts.length; i++) {
+    let titulo = filteredProducts[i].title.toLowerCase();
+    if (titulo.includes(textoBusqueda)) {
+      productosFiltrados.push(filteredProducts[i]);
+    }
+  }
+
+  filteredProducts = productosFiltrados;
+
+  // Filtrar por categoría
+  if (categoriaSeleccionada !== "" && categoriaSeleccionada !== "all") {
+    let productosPorCategoria = [];
+    for (let i = 0; i < filteredProducts.length; i++) {
+      if (filteredProducts[i].category === categoriaSeleccionada) {
+        productosPorCategoria.push(filteredProducts[i]);
+      }
+    }
+    filteredProducts = productosPorCategoria;
+  }
+
+  // Ordenar
+  if (ordenamiento === "priceAsc") {
+    for (let i = 0; i < filteredProducts.length; i++) {
+      for (let j = i + 1; j < filteredProducts.length; j++) {
+        if (filteredProducts[i].price > filteredProducts[j].price) {
+          let temporal = filteredProducts[i];
+          filteredProducts[i] = filteredProducts[j];
+          filteredProducts[j] = temporal;
+        }
+      }
+    }
+  } else if (ordenamiento === "priceDesc") {
+    for (let i = 0; i < filteredProducts.length; i++) {
+      for (let j = i + 1; j < filteredProducts.length; j++) {
+        if (filteredProducts[i].price < filteredProducts[j].price) {
+          let temporal = filteredProducts[i];
+          filteredProducts[i] = filteredProducts[j];
+          filteredProducts[j] = temporal;
+        }
+      }
+    }
+  } else if (ordenamiento === "az") {
+    for (let i = 0; i < filteredProducts.length; i++) {
+      for (let j = i + 1; j < filteredProducts.length; j++) {
+        if (filteredProducts[i].title > filteredProducts[j].title) {
+          let temporal = filteredProducts[i];
+          filteredProducts[i] = filteredProducts[j];
+          filteredProducts[j] = temporal;
+        }
+      }
+    }
+  } else if (ordenamiento === "za") {
+    for (let i = 0; i < filteredProducts.length; i++) {
+      for (let j = i + 1; j < filteredProducts.length; j++) {
+        if (filteredProducts[i].title < filteredProducts[j].title) {
+          let temporal = filteredProducts[i];
+          filteredProducts[i] = filteredProducts[j];
+          filteredProducts[j] = temporal;
+        }
+      }
+    }
+  }
+
+  renderProducts(filteredProducts);
 
 }
 
@@ -449,7 +288,18 @@ Eliminar producto del carrito.
 
 function removeFromCart(id){
 
-  // TODO
+  let carritoNuevo = [];
+  
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].id !== id) {
+      carritoNuevo.push(cart[i]);
+    }
+  }
+
+  cart = carritoNuevo;
+  
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
 
 }
 
@@ -535,14 +385,7 @@ JSON.stringify()
 
 function saveCart(){
 
-º
-
   localStorage.setItem("cart", JSON.stringify(cart));
-
-  let cartString = localStorage.getItem("cart");
-  console.log(JSON.parse(cartString));
-
-  // TODO
 
 }
 
@@ -557,7 +400,13 @@ JSON.parse()
 
 function loadCart(){
 
-  // TODO
+  let carritoGuardado = localStorage.getItem("cart");
+  
+  if (carritoGuardado) {
+    cart = JSON.parse(carritoGuardado);
+  }
+
+  renderCart();
 
 }
 
@@ -586,14 +435,38 @@ TAREAS:
 
 function toggleFavorite(id){
 
-  // TODO
+  let estaEnFavoritos = false;
+
+  for (let i = 0; i < favorites.length; i++) {
+    if (favorites[i] === id) {
+      estaEnFavoritos = true;
+    }
+  }
+
+  if (estaEnFavoritos) {
+    let favoritosNuevos = [];
+    for (let i = 0; i < favorites.length; i++) {
+      if (favorites[i] !== id) {
+        favoritosNuevos.push(favorites[i]);
+      }
+    }
+    favorites = favoritosNuevos;
+  } else {
+    favorites.push(id);
+  }
+
+  localStorage.setItem("favorites", JSON.stringify(favorites));
 
 }
 
 
 function loadFavorites(){
 
-  // TODO
+  let favoritosGuardados = localStorage.getItem("favorites");
+  
+  if (favoritosGuardados) {
+    favorites = JSON.parse(favoritosGuardados);
+  }
 
 }
 
@@ -638,7 +511,32 @@ loginForm.addEventListener(
 
     e.preventDefault();
 
-    // TODO
+    let usuario = loginForm.username.value;
+    let contrasena = loginForm.password.value;
+
+    let datosLogin = {
+      username: usuario,
+      password: contrasena
+    };
+
+    fetch("https://fakestoreapi.com/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosLogin)
+    })
+    .then(respuesta => respuesta.json())
+    .then(datos => {
+      if (datos.token) {
+        sessionStorage.setItem("token", datos.token);
+        loginModal.classList.add("hidden");
+        loginForm.reset();
+      }
+    })
+    .catch(error => {
+      console.log("Error en login", error);
+    });
 
   }
 );
@@ -726,9 +624,7 @@ closeLogin.addEventListener(
   "click",
   () => {
     loginModal.classList.add("hidden");
-
-    // TODO
-
+    loginForm.reset();
   }
 );
 
@@ -742,7 +638,9 @@ loginModal.addEventListener(
   "click",
   (e) => {
 
-    // TODO
+    if (e.target === loginModal) {
+      loginModal.classList.add("hidden");
+    }
 
   }
 );
@@ -765,7 +663,10 @@ TAREAS:
 
 function init(){
 
-  // TODO
+  getProducts();
+  loadCart();
+  loadFavorites();
+  checkSession();
 
 }
 
