@@ -4,9 +4,9 @@ fetch('https://fakestoreapi.com/products')
         return response.json();
     })
     .then(data => {
+        products = data;
         const container = document.querySelector('#productsContainer');
         if (container) container.innerHTML = '';
-
         data.forEach(products => {
             renderProducts(products);
         });
@@ -64,3 +64,13 @@ function renderProducts(product) {
     //añadimos la tarjeta en el contenedor final
     container.prepend(tarjeta);
 }
+
+
+//GUARDAR FAVORITOS EN LOCALSTORAGE
+
+//crear el evento para el boton favoritos
+let agregarFavorito = document.querySelectorAll('.fav-btn');
+agregarFavorito.addEventListener('click',()=>{
+    
+})
+

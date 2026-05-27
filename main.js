@@ -68,7 +68,7 @@ let filteredProducts = [];
 // Carrito
 let cart = [];
 // Favoritos
-let favorites = [];
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];;
 
 // ========================================
 // FASE 1 - FETCH PRODUCTOS
@@ -140,21 +140,21 @@ products.forEach(product => {
 
 //-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
 fetch('https://fakestoreapi.com/products')
-    .then(response => {
-        if (!response.ok) throw new Error('Error en la petición');
-        return response.json();
-    })
-    .then(data => {
-        const container = document.querySelector('#productsContainer');
-        if (container) container.innerHTML = '';
-
-        data.forEach(products => {
-            montarTarjeta(products);
-        });
-    })
-    .catch(error => {
-        console.error(error);
+  .then(response => {
+    if (!response.ok) throw new Error('Error en la petición');
+    return response.json();
+  })
+  .then(data => {
+    products = data;
+    const container = document.querySelector('#productsContainer');
+    if (container) container.innerHTML = '';
+    data.forEach(product => {
+      renderProducts(product);
     });
+  })
+  .catch(error => {
+    console.error(error);
+  });
 //-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
 
 
@@ -162,54 +162,83 @@ fetch('https://fakestoreapi.com/products')
 
 //-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
 //funcion pintarTarjeta
+//funcion pintarTarjeta
 function renderProducts(product) {
 
-    //Crear los elementos
-    const tarjeta = document.createElement("article");
-    const contenedorImagen = document.createElement("div");
-    const imageProduct = document.createElement("img");
-    const info = document.createElement("div");
-    const categoryProduct = document.createElement("p");
-    const titleProduct = document.createElement("h3");
-    const priceProduct = document.createElement("p");
-    const buttons = document.createElement("div");
-    const addBtn = document.createElement("button");
-    const favBtn = document.createElement("button");
+  //Crear los elementos
+  const tarjeta = document.createElement("article");
+  const contenedorImagen = document.createElement("div");
+  const imageProduct = document.createElement("img");
+  const info = document.createElement("div");
+  const categoryProduct = document.createElement("p");
+  const titleProduct = document.createElement("h3");
+  const priceProduct = document.createElement("p");
+  const buttons = document.createElement("div");
+  const addBtn = document.createElement("button");
+  const favBtn = document.createElement("button");
 
-    //asignar clases a los elementos 
-    tarjeta.classList.add("product-card");
-    contenedorImagen.classList.add("product-image");
-    imageProduct.setAttribute("src", product.image)
-    imageProduct.setAttribute("alt", product.description)
-    info.classList.add("product-info");
-    categoryProduct.classList.add("product-category");
-    titleProduct.classList.add("product-title");
-    priceProduct.classList.add("product-price");
-    buttons.classList.add("card-actions");
-    addBtn.classList.add("add-btn");
-    favBtn.classList.add("fav-btn");
+  //asignar clases a los elementos 
+  tarjeta.classList.add("product-card");
+  contenedorImagen.classList.add("product-image");
+  imageProduct.setAttribute("src", product.image);
+  imageProduct.setAttribute("alt", product.description);
+  info.classList.add("product-info");
+  categoryProduct.classList.add("product-category");
+  titleProduct.classList.add("product-title");
+  priceProduct.classList.add("product-price");
+  buttons.classList.add("card-actions");
+  addBtn.classList.add("add-btn");
+  favBtn.classList.add("fav-btn");
 
-    //Insertar los elementos en la card
-    tarjeta.prepend(contenedorImagen);
-    tarjeta.append(info);
-    contenedorImagen.append(imageProduct);
-    info.append(categoryProduct, titleProduct, priceProduct, buttons);
-    buttons.prepend(addBtn);
-    buttons.append(favBtn);
+  // Rellenar el contenido con los datos de la API
+  categoryProduct.textContent = product.category;
+  titleProduct.textContent = product.title;
+  priceProduct.textContent = `${product.price} €`;
+  addBtn.textContent = "Añadir";
 
-    // Rellenar el contenido con los datos de la API
-    categoryProduct.textContent = product.category;
-    titleProduct.textContent = product.title;
-    priceProduct.textContent = `${product.price} €`;
-    addBtn.textContent = "Añadir";
-    favBtn.textContent = "🤍";
+  // Comprobar si este producto ya es un favorito guardado para poner el emoji correcto
+  const esFavorito = favorites.some(fav => fav.id === product.id);
+  favBtn.textContent = esFavorito ? "❤️" : "🤍";
 
-    //seleccionarmos contenedor donde insertar todo y limpiamos
-    const container = document.querySelector('#productsContainer');
+  // --- EVENTO DE FAVORITOS ---
+  favBtn.addEventListener('click', () => {
+    // Revisar si el producto ya está en la lista de favoritos
+    const index = favorites.findIndex(fav => fav.id === product.id);
 
-    //añadimos la tarjeta en el contenedor final
+    if (index === -1) {
+      // Si no está, lo agregamos al array
+      favorites.push(product);
+      favBtn.textContent = "❤️";
+      console.log('Agregado a favoritos:', product.title);
+    } else {
+      // Si ya está, lo eliminamos del array
+      favorites.splice(index, 1);
+      favBtn.textContent = "🤍";
+      console.log('Eliminado de favoritos:', product.title);
+    }
+
+    // Guardar la lista actualizada en LocalStorage convirtiéndola en texto
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  });
+
+  //Insertar los elementos en la card
+  tarjeta.prepend(contenedorImagen);
+  tarjeta.append(info);
+  contenedorImagen.append(imageProduct);
+  info.append(categoryProduct, titleProduct, priceProduct, buttons);
+  buttons.prepend(addBtn);
+  buttons.append(favBtn);
+
+  //seleccionamos contenedor donde insertar todo
+  const container = document.querySelector('#productsContainer');
+
+  //añadimos la tarjeta en el contenedor final ya con su botón listo
+  if (container) {
     container.prepend(tarjeta);
+  }
 }
+console.log(favorites);
+
 //-*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*--*-*-*-*-*-*-
 
 
@@ -257,11 +286,6 @@ productsContainer.appendChild(card);
 */
 
 
-function renderProducts(productsArray){
-
-  // TODO
-
-}
 
 
 // ========================================
@@ -281,7 +305,7 @@ PISTA:
 new Set()
 */
 
-function renderCategories(productsArray){
+function renderCategories(productsArray) {
 
   // TODO
 
@@ -311,7 +335,7 @@ PISTA:
 - localeCompare()
 */
 
-function filterProducts(){
+function filterProducts() {
 
   // TODO
 
@@ -345,7 +369,7 @@ sortSelect.addEventListener(
 /*
 OBJETIVO:
 Añadir productos al carrito.
-
+ 
 TAREAS:
 - Buscar producto por ID
 - Añadir al array carrito
@@ -354,7 +378,7 @@ TAREAS:
 - Renderizar carrito
 */
 
-function addToCart(id){
+function addToCart(id) {
 
   // TODO
 
@@ -366,7 +390,7 @@ OBJETIVO:
 Eliminar producto del carrito.
 */
 
-function removeFromCart(id){
+function removeFromCart(id) {
 
   // TODO
 
@@ -376,7 +400,7 @@ function removeFromCart(id){
 /*
 OBJETIVO:
 Pintar carrito dinámicamente.
-
+ 
 MOSTRAR:
 - Nombre
 - Cantidad
@@ -384,7 +408,7 @@ MOSTRAR:
 - Total carrito
 */
 
-function renderCart(){
+function renderCart() {
 
   // TODO
 
@@ -405,12 +429,12 @@ EXTRA
 /*
 OBJETIVO:
 Guardar carrito en localStorage.
-
+ 
 PISTA:
 JSON.stringify()
 */
 
-function saveCart(){
+function saveCart() {
 
   // TODO
 
@@ -420,12 +444,12 @@ function saveCart(){
 /*
 OBJETIVO:
 Recuperar carrito guardado.
-
+ 
 PISTA:
 JSON.parse()
 */
 
-function loadCart(){
+function loadCart() {
 
   // TODO
 
@@ -446,7 +470,7 @@ EXTRA
 /*
 OBJETIVO:
 Guardar productos favoritos.
-
+ 
 TAREAS:
 - Añadir favoritos
 - Eliminar favoritos
@@ -454,14 +478,14 @@ TAREAS:
 - Recuperar favoritos
 */
 
-function toggleFavorite(id){
+function toggleFavorite(id) {
 
   // TODO
 
 }
 
 
-function loadFavorites(){
+function loadFavorites() {
 
   // TODO
 
@@ -482,19 +506,19 @@ EXTRA
 /*
 OBJETIVO:
 Simular login con FakeStoreAPI.
-
+ 
 ENDPOINT:
 https://fakestoreapi.com/auth/login
-
+ 
 USUARIO TEST:
 mor_2314
 83r5^_
-
+ 
 CONCEPTOS:
 - fetch POST
 - JSON.stringify()
 - sessionStorage
-
+ 
 TAREAS:
 - Capturar formulario
 - Enviar datos
@@ -528,13 +552,13 @@ EXTRA
 /*
 OBJETIVO:
 Mantener sesión iniciada.
-
+ 
 TAREAS:
 - Detectar token
 - Mostrar login si no existe
 */
 
-function checkSession(){
+function checkSession() {
 
   // TODO
 
@@ -544,13 +568,13 @@ function checkSession(){
 /*
 OBJETIVO:
 Cerrar sesión.
-
+ 
 TAREAS:
 - Eliminar token
 - Cerrar modal
 */
 
-function logout(){
+function logout() {
 
   // TODO
 
@@ -620,7 +644,7 @@ loginModal.addEventListener(
 /*
 OBJETIVO:
 Inicializar la aplicación.
-
+ 
 TAREAS:
 - Obtener productos
 - Cargar carrito
@@ -628,7 +652,7 @@ TAREAS:
 - Comprobar sesión
 */
 
-function init(){
+function init() {
 
   // TODO
 
