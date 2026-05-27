@@ -419,24 +419,48 @@ TAREAS:
 - Renderizar carrito
 */
 
-function addToCart(id) {
 
-  // TODO
-
+function buscarProducto(id) {
+  return products.find(product => product.id === id);
 }
+
+function addToCart(id){
+  const product = buscarProducto(id);
+  if (product) {
+    const cartItem = cart.find(item => item.id === id);
+    if (cartItem) {
+      cartItem.quantity++;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }
+  return cart;  
+}
+
+
 
 
 /*
 OBJETIVO:
 Eliminar producto del carrito.
 */
-
 function removeFromCart(id) {
 
-  // TODO
+  let carritoNuevo = [];
+  
+  for (let i = 0; i < cart.length; i++) {
+    if (cart[i].id !== id) {
+      carritoNuevo.push(cart[i]);
+    }
+  }
+
+  cart = carritoNuevo;
+  
+  localStorage.setItem("cart", JSON.stringify(cart));
+  renderCart();
 
 }
-
 
 /*
 OBJETIVO:
@@ -577,27 +601,21 @@ fetch('https://fakestoreapi.com/auth/login', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(credentials)
-})
-  .then(response => response.json())
+}) .then(response => response.json())
   .then(data => {
     console.log("¡Esta es la respuesta de la API!");
-    console.log(data); // Aquí verás el token en la consola
-
+    console.log(data); //el token en la consola
     // GUARDAR TOKEN: Guardamos el token que nos dio la API
     sessionStorage.setItem('token', data.token);
   });
 });
-
 closeLogin.addEventListener("click",() => {
-  loginModal.classList.toggle("hidden");
+loginModal.classList.toggle("hidden");
 });
-
-
 
 loginForm.addEventListener(
   "submit",
   (e) => {
-
     e.preventDefault();
 
     // TODO
