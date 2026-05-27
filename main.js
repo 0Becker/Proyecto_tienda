@@ -1,3 +1,11 @@
+//const { use } = require("react");
+
+fetch("https://fakestoreapi.com/products")
+  .then(res => res.json())
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => console.error("Error fetching products:", error));
 /*
 ========================================
 MINI ECOMMERCE - BOILERPLATE
@@ -25,6 +33,9 @@ FASES:
 // ========================================
 // SELECTORES DEL DOM
 // ========================================
+
+//login boton
+const loginBtn =document.getElementById("loginBtn");
 
 // Contenedor productos
 const productsContainer =
@@ -308,8 +319,21 @@ new Set()
 function renderCategories(productsArray) {
 
   // TODO
-
+  fetch("https://fakestoreapi.com/products")
+    .then(res => res.json())
+    .then(data => {
+      const copia = [... new Set(data.map(producto => producto.category))];
+      copia.forEach(categoria => {
+        const opcion = document.createElement("option");
+        opcion.value = categoria;
+        opcion.textContent = categoria;
+        categoryFilter.appendChild(opcion);
+      })
+    })
+    .catch(error => console.error("Error fetching categories:", error));
 }
+renderCategories();
+
 
 
 // ========================================
@@ -338,8 +362,69 @@ PISTA:
 function filterProducts() {
 
   // TODO
+  fetch("https://fakestoreapi.com/products")
+    .then(res => res.json())
+    .then(data => {
+      let men = data.filter(producto => producto.category === "men's clothing")
+      if (categoryFilter.value == "all" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "all" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceAsc") {
+        renderProducts(men.filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "priceDesc") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "az") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "men's clothing" && sortSelect.value === "za") {
+        renderProducts(men.filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (categoryFilter.value == "jewelery" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "jewelery" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "jewelery").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (categoryFilter.value == "electronics" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "electronics" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "electronics").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+      if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceAsc") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((b, a) => a.price - b.price))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "priceDesc") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.price - b.price))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "az") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => a.title.localeCompare(b.title)))
+      } else if (categoryFilter.value == "women's clothing" && sortSelect.value === "za") {
+        renderProducts(data.filter(producto => producto.category === "women's clothing").filter(producto => producto.price).sort((a, b) => b.title.localeCompare(a.title)))
+      }
+
+      if (searchInput.value) {
+        const buscador = data.filter(producto => producto.title.toLowerCase().includes(searchInput.value.toLowerCase()));
+        renderProducts(buscador);
+      }
+    })
+    .catch(error => console.error("Error filtering products:", error));
 
 }
+
+
 
 
 // ========================================
@@ -525,6 +610,30 @@ TAREAS:
 - Guardar token
 - Cerrar modal
 */
+
+loginBtn.addEventListener("click",() => {
+  loginModal.classList.toggle("hidden");
+  const credentials = { username: 'johnd', password: 'm38rmF$' };
+fetch('https://fakestoreapi.com/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(credentials)
+})
+  .then(response => response.json())
+  .then(data => {
+    console.log("¡Esta es la respuesta de la API!");
+    console.log(data); // Aquí verás el token en la consola
+
+    // GUARDAR TOKEN: Guardamos el token que nos dio la API
+    sessionStorage.setItem('token', data.token);
+  });
+});
+
+closeLogin.addEventListener("click",() => {
+  loginModal.classList.toggle("hidden");
+});
+
+
 
 loginForm.addEventListener(
   "submit",
